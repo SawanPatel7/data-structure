@@ -1,0 +1,107 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define pl pair<int,int>
+void print_path(map<pl,pl>m,pl p)
+{
+  if(p.first==0&&p.second==0)
+  {
+    cout<<p.first<<" "<<p.second<<endl;return;
+  }
+  print_path(m,m[p]);
+  cout<<p.first<<" "<<p.second<<endl;
+  return;
+}
+int main()
+{
+  int n,m,x;
+  cin>>n>>m>>x;
+  queue<pl>q;
+  q.push({0,0});
+  set<pl>s;
+  s.insert({0,0});
+  map<pl,pl>mp;
+  bool sol=false;
+  while(!q.empty())
+  {
+    auto p=q.front();q.pop();
+    int ft=p.first;
+    int st=p.second;
+    if(st+ft==x)
+    {
+      sol=true;
+      print_path(mp,p);
+      return 0;
+    }
+    //ft is empty()
+    if(s.find({0,st})==s.end())
+    {
+      s.insert({0,st});
+      q.push({0,st});
+      mp[{0,st}]=p;
+    }
+    //st empty()
+    if(s.find({ft,0})==s.end())
+    {
+      s.insert({ft,0});
+      q.push({ft,0});
+      mp[{ft,0}]=p;
+    }
+    //fill st
+    if(s.find({ft,m})==s.end())
+    {
+      s.insert({ft,m});
+      q.push({ft,m});
+      mp[{ft,m}]=p;
+    }
+    //fill ft
+    if(s.find({n,st})==s.end())
+    {
+      s.insert({n,st});
+      q.push({n,st});
+      mp[{n,st}]=p;
+    }
+    //ft to st
+    if(st+ft<=m)
+    {
+      if(s.find({0,st+ft})==s.end())
+      {
+        s.insert({0,st+ft});
+        q.push({0,st+ft});
+        mp[{0,st+ft}]=p;
+      }
+    }
+    else
+    {
+      if(s.find({st+ft-m,m})==s.end())
+      {
+        s.insert({st+ft-m,m});
+        q.push({st+ft-m,m});
+        mp[{st+ft-m,m}]=p;
+      }
+    }
+    //st to ft
+    if(st+ft<=n)
+    {
+      if(s.find({st+ft,0})==s.end())
+      {
+        s.insert({st+ft,0});
+        q.push({st+ft,0});
+        mp[{st+ft,0}]=p;
+      }
+    }
+    else
+    {
+      if(s.find({n,st+ft-n})==s.end())
+      {
+        s.insert({n,st+ft-n});
+        q.push({n,st+ft-n});
+        mp[{n,st+ft-n}]=p;
+      }
+    }
+
+  }
+  if(sol==false)
+  {
+    cout<<"not soved"<<endl;
+  }
+}
