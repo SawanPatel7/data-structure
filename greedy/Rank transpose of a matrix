@@ -1,0 +1,111 @@
+#define pl pair<int,int>
+class Solution {
+public:
+    pl par[501][501];
+    int rank[501][501];
+    pl find(pl x)
+    {
+        if(par[x.first][x.second].first==x.first&&par[x.first][x.second].second==x.second)return x;
+        return par[x.first][x.second]=find(par[x.first][x.second]);
+    }
+    void _union(pl x,pl y)
+    {
+        pl a=find(x);
+        pl b=find(y);
+        par[a.first][a.second]=b;
+        // if(rank[a.first][a.second]>rank[b.first][b.second])
+        // {
+        //     par[b.first][b.second]=a;
+        //     rank[a.first][a.second]++;
+        // }
+        // else
+        // {
+        //     par[a.first][a.second]=b;
+        //     rank[b.first][b.second]++;
+        // }
+    }
+    vector<vector<int>> matrixRankTransform(vector<vector<int>>& mat) {
+        int n=mat.size();
+        int m=mat[0].size();
+        vector<vector<int>>ans(n,vector<int>(m,0));
+        for(int i=0;i<n;i++)
+        {
+            for(int j=0;j<m;j++)
+            {
+                par[i][j]={i,j};
+                rank[i][j]=0;
+            }
+        }
+        
+        
+        for(int i=0;i<n;i++)
+        {
+            map<int,pl>mp;
+            for(int j=0;j<m;j++)
+            {
+                if(mp.find(mat[i][j])!=mp.end())
+                {
+                    _union(mp[mat[i][j]],{i,j});
+                }
+                else mp[mat[i][j]]={i,j};
+            }
+        }
+        
+        for(int j=0;j<m;j++)
+        {
+             map<int,pl>mp;
+            for(int i=0;i<n;i++)
+            {
+                if(mp.find(mat[i][j])!=mp.end())
+                {
+                    _union(mp[mat[i][j]],{i,j});
+                }
+                else mp[mat[i][j]]={i,j};
+            }
+        }
+        
+        vector<pl> v[n][m];
+        for(int i=0;i<n;i++)
+        {
+            for(int j=0;j<m;j++)
+            {
+                pl x=find({i,j});
+                v[x.first][x.second].push_back({i,j});
+            }
+        }
+        
+        map<int,vector<vector<pl>>>all;
+        for(int i=0;i<n;i++)
+        {
+            for(int j=0;j<m;j++)
+            {
+                if(v[i][j].size()==0)continue;
+                all[mat[i][j]].push_back(v[i][j]);
+            }
+        }
+        
+        vector<int>row(n,0),col(m,0);
+        for(auto x:all)
+        {
+            auto p=x.second;
+            for(auto l:p)
+            {
+                int cur=0;
+                for(auto pr:l)
+                {
+                    cur=max(cur,max(row[pr.first],col[pr.second])+1);
+                }
+                for(auto pr:l)
+                {
+                    ans[pr.first][pr.second]=cur;
+                    row[pr.first]=cur;
+                    col[pr.second]=cur;
+                }
+            }
+        }
+        
+        return ans;
+        
+        
+    }
+};
