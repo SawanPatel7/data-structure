@@ -1,0 +1,77 @@
+#include<bits/stdc++.h>
+using namespace std;
+int g[500][500];
+int n;
+int index_max(int *amount)
+{
+   int mx=amount[0];
+   int ind=0;
+   for(int i=1;i<n;i++)
+   {
+     if(amount[i]>mx)
+     {
+      mx=amount[i];
+      ind=i;
+     }
+   }
+   return ind;
+}
+int index_min(int *amount)
+{
+  int mn=amount[0];
+  int ind=0;
+  for(int i=0;i<n;i++)
+  {
+    if(amount[i]<mn)
+    {
+      mn=amount[i];
+      ind=i;
+    }
+  }
+  return ind;
+
+}
+int min_credit(int *amount)
+{
+
+}
+void flow(int *amount)
+{
+  int max_credit=index_max(amount);int min_credit=index_min(amount);
+  if(amount[max_credit]==0&&amount[min_credit]==0)return ;
+  int val=min(-amount[min_credit],amount[max_credit]);
+  amount[max_credit]-=val;
+  amount[min_credit]+=val;
+  cout<<min_credit<<" give amount of "<<val<<" to "<<max_credit<<endl;
+  flow(amount);
+
+}
+void minimum_cash_flow()
+{
+  int amount[n];
+  memset(amount,0,sizeof(amount));
+  for(int i=0;i<n;i++)
+  {
+    for(int j=0;j<n;j++)
+    {
+      amount[i]+=(g[i][j]-g[j][i]);
+    }
+  }
+  flow(amount);
+}
+int main()
+{
+  cin>>n;
+
+  for(int i=0;i<n;i++)
+  {
+    for(int j=0;j<n;j++)
+    {
+      cin>>g[i][j];
+    }
+  }
+  
+  minimum_cash_flow();
+
+
+}
